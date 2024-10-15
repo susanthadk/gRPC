@@ -1,0 +1,32 @@
+﻿using Greet;
+using Grpc.Core;
+using server;
+
+const int Port = 50052;
+
+Server server = null;
+
+try
+{
+	server = new Server()
+	{
+		Services = {GreetingService.BindService(new GreetingServiceImpl())},
+		Ports = { new ServerPort("localhost", Port, ServerCredentials.Insecure) }
+	};
+
+	server.Start();
+	Console.WriteLine("The server is listening on the port : " + Port);
+	Console.ReadKey();
+}
+catch (IOException ex)
+{
+	Console.WriteLine("The server is failed to start : " + ex.Message);
+	throw;
+}
+finally
+{
+	if(server != null)
+	{
+		server.ShutdownAsync().Wait();
+	}
+}
